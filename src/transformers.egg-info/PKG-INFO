@@ -329,7 +329,7 @@ Description: # DNABERT
         ```
         
         This would save a `mutations.tsv` file under `save_file_dir`, that contains index of original sequence (in original `dev.tsv`), original sequence and predictions, mutated sequence and predictions, as well as the difference score and log odds ratio of the change in every case.
-        
+
 Keywords: NLP deep learning transformer pytorch tensorflow BERT GPT GPT-2 google openai CMU
 Platform: UNKNOWN
 Classifier: Development Status :: 5 - Production/Stable
