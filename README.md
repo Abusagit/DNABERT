@@ -43,7 +43,7 @@ python3 -m pip install -r requirements.txt
 change to a desired directory by `cd PATH_NAME`
 
 ```
-git clone https://github.com/NVIDIA/apex
+git clone git@github.com:Abusagit/DNABERT.git
 cd apex
 pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
 ```
