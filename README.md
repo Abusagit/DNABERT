@@ -29,7 +29,7 @@ conda activate dnabert
 ```
 conda install pytorch torchvision cudatoolkit=10.0 -c pytorch
 
-git clone https://github.com/jerryji1993/DNABERT
+git clone git@github.com:Abusagit/DNABERT.git
 cd DNABERT
 python3 -m pip install --editable .
 cd examples
@@ -43,7 +43,8 @@ python3 -m pip install -r requirements.txt
 change to a desired directory by `cd PATH_NAME`
 
 ```
-git clone git@github.com:Abusagit/DNABERT.git
+
+git clone https://github.com/NVIDIA/apex
 cd apex
 pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
 ```
