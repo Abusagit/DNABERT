@@ -257,6 +257,15 @@ def train(args, train_dataset, model, tokenizer):
     best_auc = 0
     last_auc = 0
     stop_count = 0
+    
+    F1_BEST = 0
+    AUC_BEST = 0
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
+    output_eval_file = os.path.join(args.output_dir, "eval_results.tsv")
+    
+    fill_first_row(task_name=args.task_name, filename=output_eval_file)
+    
 
     for _ in train_iterator:
         epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
@@ -340,6 +349,35 @@ def train(args, train_dataset, model, tokenizer):
                     for key, value in logs.items():
                         tb_writer.add_scalar(key, value, global_step)
                     print(json.dumps({**logs, **{"step": global_step}}))
+                    
+                    if (f1:=logs["eval_f1"]) > F1_BEST:
+                        F1_BEST = f1
+                        #save chekpoint
+                        checkpoint_prefix = "checkpoint_max_f1"
+                        output_dir = os.path.join(args.output_dir, checkpoint_prefix)
+                        if os.path.exists(output_dir):
+                            shutil.rmtree(output_dir)
+                        
+                        os.makedirs(output_dir)
+                        
+                        model_to_save = (
+                            model.module if hasattr(model, "module") else model
+                        )  # Take care of distributed/parallel training
+                        model_to_save.save_pretrained(output_dir)
+                        tokenizer.save_pretrained(output_dir)
+                        
+                        logger.info("Saving model max F1 checkpoint to %s", output_dir)
+
+                        #_rotate_checkpoints(args, checkpoint_prefix)
+
+                        if args.task_name != "dna690":
+                            torch.save(args, os.path.join(output_dir, "training_args.bin"))
+                            torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                            torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                        logger.info("Saving optimizer and scheduler states to %s", output_dir)
+
+
+                        
 
                 if args.local_rank in [-1, 0] and args.save_steps > 0 and global_step % args.save_steps == 0:
                     if args.task_name == "dna690" and results["auc"] < best_auc:
@@ -455,18 +493,18 @@ def evaluate(args, model, tokenizer, prefix="", evaluate=True):
             eval_output_dir = args.result_dir
             if not os.path.exists(args.result_dir): 
                 os.makedirs(args.result_dir)
-        output_eval_file = os.path.join(eval_output_dir, prefix, "eval_results.txt")
+        output_eval_file = os.path.join(eval_output_dir, prefix, "eval_results.tsv")
         with open(output_eval_file, "a") as writer:
 
             if args.task_name[:3] == "dna":
-                eval_result = args.data_dir.split('/')[-1] + " "
+                eval_result = args.data_dir.split('/')[-1] + "\t"
             else:
                 eval_result = ""
 
             logger.info("***** Eval results {} *****".format(prefix))
             for key in sorted(result.keys()):
                 logger.info("  %s = %s", key, str(result[key]))
-                eval_result = eval_result + str(result[key])[:5] + " "
+                eval_result = eval_result + str(result[key])[:5] + "\t"
             writer.write(eval_result + "\n")
 
     if args.do_ensemble_pred:
