@@ -14,13 +14,13 @@ conda activate test
 export KMER=6
 export MODEL_PATH=~/models/dnabert_6
 export DATA_PATH=~/data/LM_6_2000
-export OUTPUT_PATH=~/train/LM_6_2000_3_epochs
+export OUTPUT_PATH=~/train/LM_6_2000_3_epochs_max_f1_checkpoint_2
 export MAX_SEQ_LEN=2048
 export BATCH_SIZE=1
 export MODEL_NAME=dnalong
 export PREPROCESS_THREADS=24
+export GRAD_ACCUM_STEPS=4
 
-# srun python3 checkm_cuda.py
 cd examples
 srun python3 run_finetune.py \
                     --model_type $MODEL_NAME \
@@ -33,7 +33,7 @@ srun python3 run_finetune.py \
                     --max_seq_length $MAX_SEQ_LEN \
                     --per_gpu_eval_batch_size=$BATCH_SIZE \
                     --per_gpu_train_batch_size=$BATCH_SIZE \
-                    --learning_rate 2e-4 \
+                    --learning_rate 1e-4 \
                     --num_train_epochs 3.0 \
                     --output_dir $OUTPUT_PATH \
                     --evaluate_during_training \
@@ -43,4 +43,5 @@ srun python3 run_finetune.py \
                     --hidden_dropout_prob 0.1 \
                     --overwrite_output \
                     --weight_decay 0.01 \
+                    --gradient_accumulation_steps $GRAD_ACCUM_STEPS \
                     --n_process $PREPROCESS_THREADS\
