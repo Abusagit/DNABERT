@@ -122,7 +122,9 @@ def fill_first_row(task_name, filename):
     }
     
     with open(filename, "w") as file_w:
-        file_w.write(f"DATA\t{'\t'.join(metrics[task_name])}\n")
+        metrics = '\t' + '\t'.join(metrics[task_name])
+        file_w.write(f"DATA{metrics}\n")
+        
 
 def set_seed(args):
     random.seed(args.seed)
@@ -511,9 +513,10 @@ def evaluate(args, model, tokenizer, prefix="", evaluate=True):
                 eval_result = ""
 
             logger.info("***** Eval results {} *****".format(prefix))
+            eval_result = '\t'.join(str(result[key])[:5] for key in sorted(result.keys()))
+                                    
             for key in sorted(result.keys()):
                 logger.info("  %s = %s", key, str(result[key]))
-                eval_result = eval_result + str(result[key])[:5] + "\t"
             writer.write(eval_result + "\n")
 
     if args.do_ensemble_pred:
