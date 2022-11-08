@@ -124,7 +124,6 @@ def fill_first_row(task_name, filename):
     with open(filename, "w") as file_w:
         metrics = '\t' + '\t'.join(metrics[task_name])
         file_w.write(f"DATA{metrics}\n")
-        
 
 def set_seed(args):
     random.seed(args.seed)
