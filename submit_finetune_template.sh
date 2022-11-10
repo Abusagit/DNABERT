@@ -8,13 +8,16 @@
 #SBATCH --out=out.txt
 
 
+# Hook onda environment with installed dnabert packages:
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate test
 
+
+# Variables, you should use your own paths and feel free to change hyperparameters
 export KMER=6
-export MODEL_PATH=~/models/dnabert_6
-export DATA_PATH=~/data/LM_6_2000
-export OUTPUT_PATH=~/train/LM_6_2000_3_epochs_max_f1_checkpoint_early_stop
+export MODEL_PATH=path_to_model/
+export DATA_PATH=path_to_data/
+export OUTPUT_PATH=output_path/
 export MAX_SEQ_LEN=2048
 export BATCH_SIZE=1
 export MODEL_NAME=dnalong
