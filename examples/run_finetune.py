@@ -122,8 +122,8 @@ def fill_first_row(task_name, filename):
     }
     
     with open(filename, "w") as file_w:
-        metrics = '\t' + '\t'.join(metrics[task_name])
-        file_w.write(f"DATA{metrics}\n")
+        metrics = '\t'.join(metrics[task_name])
+        file_w.write(f"{metrics}\n")
 
 def set_seed(args):
     random.seed(args.seed)
@@ -949,7 +949,7 @@ def main():
         "--per_gpu_pred_batch_size", default=8, type=int, help="Batch size per GPU/CPU for prediction.",
     )
     parser.add_argument(
-        "--early_stop", default=0, type=int, help="set this to a positive integet if you want to perfrom early stop. The model will stop \
+        "--early_stop", default=0, type=int, help="set this to a positive integer if you want to perfrom early stop. The model will stop \
                                                     if the auc keep decreasing early_stop times",
     )
     parser.add_argument(
